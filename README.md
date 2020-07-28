@@ -34,7 +34,7 @@ El codigo "contador-streams" es una función python que consume los eventos regi
 - Clonar el repositorio
 
 ```bash
-git clone https://github.com/PabloBruno/ml-mutants.git
+git clone https://github.com/PabloBruno/ml-mutants-challenge.git
 ```
 
 - Instalar dependencias y creacion del jar:
@@ -105,4 +105,4 @@ Attributes:  count, Type: N
 - A nivel arquitectónico, ambos microservicios fueron implementados usando AWS Elastic Beanstalk. Se debe activar la escalabilidad automática en los dos. Se configuró una ApiGateway para hacer peticiones a un unico endpoint. Esta, luego, reenvía las peticiones al microservicio correspondiente.
 - Se utilizó DynamoDB para almacenar los adn y el resultado de los análisis y un contador de resultados para humanos y mutantes. En este caso la escalabilidad automática tambien se debe activar.
   Para el adn se hizo una implementación propia de un hash para la clave primaria. Se entiende que el hash usado puede crear colisiones a medida que crece la base de datos. Quedó pendiente en la investigación utilizar un hash SHA1 para reducir ampliamente la posibilidad de colisiones.
-  Para el contador de MUTANTES y HUMANOS se cró una tabla a la cual se le hacen updates atómicos. Se entiende que esto puede traer problemas de escalabilidad a la hora de manejar muchisimas escrituras por segundo ya que se concentra todo en una tabla. Para evitar esto, se envían eventos de creación de nuevos MUTANTES o HUMANOS a un stream de Amazon Kinesis. Finalmente estos eventos son consumidos por una función de AwsLambda que cuenta los eventos y hace el update a la tabla con los contadores. Esto ayuda a reducir el impacto a la BD y contar eventos de a grupos en vez de hacer escrituras individuales (configurando la ejecución de la función lambda en sí). Ante cualquier cosa, Amazon Kinesis mantiene los eventos almacenados según se lo configure.
+  Para el contador de MUTANTES y HUMANOS se creó una tabla a la cual se le hacen updates atómicos. Se entiende que esto puede traer problemas de escalabilidad a la hora de manejar muchisimas escrituras por segundo ya que se concentra todo en una tabla. Para evitar esto, se envían eventos de creación de nuevos MUTANTES o HUMANOS a un stream de Amazon Kinesis. Finalmente estos eventos son consumidos por una función de AwsLambda que cuenta los eventos y hace el update a la tabla con los contadores. Esto ayuda a reducir el impacto a la BD y contar eventos de a grupos en vez de hacer escrituras individuales (configurando la ejecución de la función lambda en sí). Ante cualquier cosa, Amazon Kinesis mantiene los eventos almacenados según se lo configure.
